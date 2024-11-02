@@ -1,6 +1,5 @@
 "use client";
 import CreateNewRoomButton from "@/components/custom/CreateNewRoomButton";
-import { Button } from "@/components/ui/button";
 import { useStorage } from "@liveblocks/react/suspense";
 import { useParams, useRouter } from "next/navigation";
 import { FC, useEffect } from "react";
@@ -37,13 +36,6 @@ const GameRoom: FC<GameRoomProps> = ({ currentUserName }) => {
         <h1 className="text-2xl font-semibold">🃏 {roomInfo.name}</h1>
         <div className="flex items-center gap-4">
           <CreateNewRoomButton isNewPage />
-          <Button
-            onClick={() => {
-              channel.postMessage("hahaha");
-            }}
-          >
-            HI
-          </Button>
           <div className="flex items-center">
             <p className="mr-2 bg-blue-100 text-blue-400 font-semibold size-10 flex items-center justify-center rounded-full">
               {currentUserName?.slice(0, 1)}
