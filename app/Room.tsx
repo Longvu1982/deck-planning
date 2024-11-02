@@ -11,7 +11,6 @@ import { LiveList, LiveObject } from "@liveblocks/client";
 import { EState } from "@/liveblocks.config";
 
 export function Room({ children }: { children: ReactNode }) {
-  console.log(process.env.LIVEBLOCKS_PUBLIC_API_KEY);
   const router = useRouter();
   const params = useParams();
 

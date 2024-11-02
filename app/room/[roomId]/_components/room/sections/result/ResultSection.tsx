@@ -1,8 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { useMutation, useStorage } from "@liveblocks/react/suspense";
-import ResultCard from "./ResultCard";
-import { EState } from "@/liveblocks.config";
-import ResultChart from "./ResultChart";
 import { Switch } from "@/components/ui/switch";
 import {
   Tooltip,
@@ -10,14 +6,37 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import useWindowSize from "@/lib/hooks/useWindowSize";
+import { EState } from "@/liveblocks.config";
+import {
+  useBroadcastEvent,
+  useEventListener,
+  useMutation,
+  useStorage,
+} from "@liveblocks/react/suspense";
+import { useState } from "react";
+import Confetti from "react-confetti";
+import ResultCard from "./ResultCard";
+import ResultChart from "./ResultChart";
 
 const ResultSection = () => {
   const selections = useStorage((state) => state.selections);
   const gameState = useStorage((state) => state.gameState);
+  const [isShowConfetti, setIsShowConfetti] = useState(false);
+  const { width, height } = useWindowSize();
+  const broadcast = useBroadcastEvent();
+
+  const startConfetti = () => {
+    setIsShowConfetti(true);
+    setTimeout(() => setIsShowConfetti(false), 3500);
+  };
 
   const handleViewResult = useMutation(({ storage }) => {
     const gameStateStorage = storage.get("gameState");
     gameStateStorage.set("state", EState.REVEALED);
+
+    broadcast({ type: "Hooray" });
+    startConfetti();
   }, []);
 
   const handleReset = useMutation(({ storage }) => {
@@ -49,7 +68,7 @@ const ResultSection = () => {
           </div>
           <TooltipProvider>
             <Tooltip delayDuration={0}>
-              <TooltipTrigger>
+              <TooltipTrigger asChild>
                 <Button
                   disabled={isDisabled}
                   onClick={handleViewResult}
@@ -82,6 +101,12 @@ const ResultSection = () => {
     );
   };
 
+  useEventListener(({ event }) => {
+    if (event.type === "Hooray") {
+      startConfetti();
+    }
+  });
+
   return (
     <div className="h-[60vh] flex items-center justify-center gap-40">
       <div className="w-60 h-60 rounded-full bg-blue-300 relative origin-center">
@@ -96,6 +121,9 @@ const ResultSection = () => {
         {renderActionButton()}
       </div>
       {gameState.state === EState.REVEALED && <ResultChart />}
+      {isShowConfetti && (
+        <Confetti width={width} height={height} tweenDuration={100} />
+      )}
     </div>
   );
 };
