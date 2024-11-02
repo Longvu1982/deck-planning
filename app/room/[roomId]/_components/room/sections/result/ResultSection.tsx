@@ -54,8 +54,12 @@ const ResultSection = () => {
 
   const renderActionButton = () => {
     if (gameState.state === EState.PENDING) {
-      const isDisabled =
+      const isDisabledByNumber =
+        selections.filter((item) => item.value !== null).length < 2;
+      const isDisabledBySpectatorRule =
         selections.some((item) => item.value === null) && !gameState.allowEmpty;
+
+      const isDisabled = isDisabledByNumber || isDisabledBySpectatorRule;
 
       return (
         <div className="flex flex-col gap-8 items-center absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
@@ -69,19 +73,22 @@ const ResultSection = () => {
           <TooltipProvider>
             <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
-                <Button
-                  disabled={isDisabled}
-                  onClick={handleViewResult}
-                  className="p-6 hover:scale-105 transition-all"
-                >
-                  View Result
-                </Button>
+                <span tabIndex={0}>
+                  <Button
+                    disabled={isDisabled}
+                    onClick={handleViewResult}
+                    className="p-6 hover:scale-105 transition-all"
+                  >
+                    View Result
+                  </Button>
+                </span>
               </TooltipTrigger>
               {isDisabled && (
                 <TooltipContent>
                   <p>
-                    If allow empty is disabled, all participants must enter
-                    their vote.
+                    {isDisabledByNumber
+                      ? "Should have at least 2 votes."
+                      : "If allow spectator is disabled, all participants must enter their votes."}
                   </p>
                 </TooltipContent>
               )}

@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { EState, UserSelection } from "@/liveblocks.config";
 import { useStorage } from "@liveblocks/react/suspense";
 import React, { FC } from "react";
+import useLocalStorage from "use-local-storage";
 
 interface ResultCardProps {
   item: UserSelection;
@@ -13,6 +14,10 @@ const ResultCard: FC<ResultCardProps> = ({ item, index, cardCount }) => {
   const gameState = useStorage((state) => state.gameState);
   const isSelected = item.value != null;
   const isRevealed = isSelected && gameState.state === EState.REVEALED;
+  const [currentUserName] = useLocalStorage(
+    "currentUserName",
+    localStorage.getItem("currentUserName")
+  );
 
   const renderCardContent = () => {
     return (
@@ -55,7 +60,10 @@ const ResultCard: FC<ResultCardProps> = ({ item, index, cardCount }) => {
         }}
       >
         <p className="absolute -top-6 whitespace-nowrap left-1/2 -translate-x-1/2 text-center text-xs">
-          {item.name}
+          {item.name}{" "}
+          {currentUserName === item.name && (
+            <span className="text-blue-400">(you)</span>
+          )}
         </p>
         <div className="flip-card-inner rounded-md">{renderCardContent()}</div>
       </div>

@@ -9,6 +9,7 @@ import {
 import { useParams, useRouter } from "next/navigation";
 import { LiveList, LiveObject } from "@liveblocks/client";
 import { EState } from "@/liveblocks.config";
+import FullPageLoading from "@/components/loading/FullPageLoading";
 
 export function Room({ children }: { children: ReactNode }) {
   const router = useRouter();
@@ -32,7 +33,7 @@ export function Room({ children }: { children: ReactNode }) {
           }),
         }}
       >
-        <ClientSideSuspense fallback={<div>Loading…</div>}>
+        <ClientSideSuspense fallback={<FullPageLoading />}>
           {children}
         </ClientSideSuspense>
       </RoomProvider>
