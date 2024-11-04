@@ -11,7 +11,7 @@ import EmojiPicker from "emoji-picker-react";
 
 const ChatBox = () => {
   const [isMinimized, setMinimized] = useState<boolean>(true);
-  const [isOpenEmoji, setIsOpenEmoji] = useState<boolean>(true);
+  const [isOpenEmoji, setIsOpenEmoji] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState("");
   const [currentUserName] = useLocalStorage(
     "currentUserName",
