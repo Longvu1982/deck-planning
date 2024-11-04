@@ -47,10 +47,7 @@ const RoomPage = () => {
         isOpenDialog={isOpenJoinDialog}
         setOpenDialog={setOpenJoinDialog}
       />
-      <GameRoom
-        currentUserName={currentUserName}
-        setCurrentUserName={setCurrentUserName}
-      />
+      <GameRoom currentUserName={currentUserName} />
     </>
   );
 };

@@ -24,6 +24,12 @@ export type GameState = {
   isResultRounded: boolean;
 };
 
+export type Message = {
+  sender: string;
+  content: string;
+  datetime: string;
+};
+
 declare global {
   interface Liveblocks {
     // Each user's Presence, for useMyPresence, useOthers, etc.
@@ -37,6 +43,7 @@ declare global {
       selections: LiveList<LiveObject<UserSelection>>;
       roomInfo: LiveObject<TRoomInfo>;
       gameState: LiveObject<GameState>;
+      messages: LiveList<Message>;
       // Example, a conflict-free list
       // animals: LiveList<string>;
     };

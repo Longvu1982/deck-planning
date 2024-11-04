@@ -4,11 +4,11 @@ import { useStorage } from "@liveblocks/react/suspense";
 import { useParams, useRouter } from "next/navigation";
 import { FC, useEffect } from "react";
 import CardSection from "./sections/card/CardSection";
+import ChatBox from "./sections/chat/ChatBox";
 import ResultSection from "./sections/result/ResultSection";
 
 interface GameRoomProps {
   currentUserName: string | undefined;
-  setCurrentUserName: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
 const channel = new BroadcastChannel("New Room Channel");
@@ -30,6 +30,7 @@ const GameRoom: FC<GameRoomProps> = ({ currentUserName }) => {
   }, [params.roomId, router]);
 
   if (!roomInfo.name) return <></>;
+
   return (
     <div className="p-6">
       <div className="flex items-center justify-between">
@@ -44,10 +45,9 @@ const GameRoom: FC<GameRoomProps> = ({ currentUserName }) => {
           </div>
         </div>
       </div>
-
       <ResultSection />
-
       <CardSection selectValues={selectValues} />
+      <ChatBox />
     </div>
   );
 };

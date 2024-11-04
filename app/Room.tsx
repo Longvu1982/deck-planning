@@ -31,6 +31,7 @@ export function Room({ children }: { children: ReactNode }) {
             state: EState.PENDING,
             isResultRounded: true,
           }),
+          messages: new LiveList([]),
         }}
       >
         <ClientSideSuspense fallback={<FullPageLoading />}>
