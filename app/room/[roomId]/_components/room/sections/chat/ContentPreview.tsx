@@ -10,15 +10,8 @@ interface URLData {
   author: string | null;
   date: string;
   description: string;
-  image: {
-    url: string;
-    type: string;
-    size: number;
-    height: number;
-    width: number;
-  };
   lang: string;
-  logo: {
+  logo?: {
     url: string;
     type: string;
     size: number;
@@ -68,13 +61,15 @@ const ContentPreview: FC<LinkPreviewProps> = ({ content }) => {
       onClick={() => window.open(content)}
       className="cursor-pointer hover:opacity-75 flex items-center gap-2"
     >
-      <Image
-        className="w-6 h-6 rounded-full"
-        src={data.logo.url}
-        alt={data.title}
-        width={200}
-        height={200}
-      />
+      {data.logo?.url && (
+        <Image
+          className="w-6 h-6 rounded-full"
+          src={data.logo.url}
+          alt={data.title}
+          width={200}
+          height={200}
+        />
+      )}
       <div className="flex flex-col">
         <p className="text-sm font-semibold line-clamp-2">{data.title}</p>
         <p className="text-xs font-light">{data.author}</p>

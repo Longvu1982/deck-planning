@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-import React, { FC } from "react";
+import { FC } from "react";
 import { uuid } from "uuidv4";
 import { Button, ButtonProps } from "../ui/button";
 
@@ -17,7 +17,14 @@ const CreateNewRoomButton: FC<ButtonProps & { isNewPage?: boolean }> = ({
   };
 
   return (
-    <Button {...props} onClick={createRoom}>
+    <Button
+      {...props}
+      onClick={(e) => {
+        props.onClick?.(e);
+        createRoom();
+        console.log("here");
+      }}
+    >
       Create new room
     </Button>
   );

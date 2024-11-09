@@ -30,12 +30,14 @@ export type Message = {
   datetime: string;
 };
 
+export type Typing = { isTyping: boolean; name: string };
+
 declare global {
   interface Liveblocks {
     // Each user's Presence, for useMyPresence, useOthers, etc.
     Presence: {
       // Example, real-time cursor coordinates
-      // cursor: { x: number; y: number };
+      typing: Typing;
     };
 
     // The Storage tree for the room, for useMutation, useStorage, etc.
@@ -60,7 +62,7 @@ declare global {
 
     // Custom events, for useBroadcastEvent, useEventListener
     RoomEvent: {
-      type: "Hooray";
+      type: "Hooray" | "New Message";
     };
     // Example has two events, using a union
     // | { type: "PLAY" }

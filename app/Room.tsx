@@ -1,15 +1,15 @@
 "use client";
 
-import { ReactNode } from "react";
+import FullPageLoading from "@/components/loading/FullPageLoading";
+import { EState } from "@/liveblocks.config";
+import { LiveList, LiveObject } from "@liveblocks/client";
 import {
+  ClientSideSuspense,
   LiveblocksProvider,
   RoomProvider,
-  ClientSideSuspense,
 } from "@liveblocks/react/suspense";
 import { useParams, useRouter } from "next/navigation";
-import { LiveList, LiveObject } from "@liveblocks/client";
-import { EState } from "@/liveblocks.config";
-import FullPageLoading from "@/components/loading/FullPageLoading";
+import { ReactNode } from "react";
 
 export function Room({ children }: { children: ReactNode }) {
   const router = useRouter();
@@ -22,6 +22,14 @@ export function Room({ children }: { children: ReactNode }) {
       publicApiKey={process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY!}
     >
       <RoomProvider
+        initialPresence={{
+          typing: {
+            isTyping: false,
+            name: global?.window
+              ? localStorage?.getItem("currentUserName") ?? ""
+              : "",
+          },
+        }}
         id={params.roomId as string}
         initialStorage={{
           selections: new LiveList([]),
