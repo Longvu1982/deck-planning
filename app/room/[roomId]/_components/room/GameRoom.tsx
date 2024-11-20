@@ -2,10 +2,11 @@
 import CreateNewRoomButton from "@/components/custom/CreateNewRoomButton";
 import { useStorage } from "@liveblocks/react/suspense";
 import { useParams, useRouter } from "next/navigation";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import CardSection from "./sections/card/CardSection";
 import ChatBox from "./sections/chat/ChatBox";
 import ResultSection from "./sections/result/ResultSection";
+import ShareButton from "./sections/share/ShareButton";
 
 interface GameRoomProps {
   currentUserName: string | undefined;
@@ -13,6 +14,7 @@ interface GameRoomProps {
 
 const channel = new BroadcastChannel("New Room Channel");
 const GameRoom: FC<GameRoomProps> = ({ currentUserName }) => {
+  const [isOpenDialog, setIsOpenDialog] = useState(false);
   const roomInfo = useStorage((state) => state.roomInfo);
   const selectValues = roomInfo.value ?? [];
   const params = useParams();
@@ -37,6 +39,10 @@ const GameRoom: FC<GameRoomProps> = ({ currentUserName }) => {
         <h1 className="text-2xl font-semibold">🃏 {roomInfo.name}</h1>
         <div className="flex items-center gap-4">
           <CreateNewRoomButton isNewPage />
+          <ShareButton
+            isOpenDialog={isOpenDialog}
+            setIsOpenDialog={setIsOpenDialog}
+          />
           <div className="flex items-center">
             <p className="mr-2 bg-blue-100 text-blue-400 font-semibold size-10 flex items-center justify-center rounded-full">
               {currentUserName?.slice(0, 1)}
