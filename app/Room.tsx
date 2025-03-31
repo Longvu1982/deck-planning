@@ -38,6 +38,7 @@ export function Room({ children }: { children: ReactNode }) {
             allowEmpty: true,
             state: EState.PENDING,
             isResultRounded: true,
+            showChat: true,
           }),
           messages: new LiveList([]),
         }}

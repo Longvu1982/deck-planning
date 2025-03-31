@@ -20,6 +20,7 @@ export enum EState {
 }
 export type GameState = {
   allowEmpty: boolean;
+  showChat: boolean;
   state: EState;
   isResultRounded: boolean;
 };

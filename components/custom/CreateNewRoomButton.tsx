@@ -2,6 +2,7 @@ import { useRouter } from "next/navigation";
 import { FC } from "react";
 import { uuid } from "uuidv4";
 import { Button, ButtonProps } from "../ui/button";
+import { Plus } from "lucide-react";
 
 const CreateNewRoomButton: FC<ButtonProps & { isNewPage?: boolean }> = ({
   isNewPage = false,
@@ -25,7 +26,8 @@ const CreateNewRoomButton: FC<ButtonProps & { isNewPage?: boolean }> = ({
         console.log("here");
       }}
     >
-      Create new room
+      <span className="hidden md:inline">Create new room</span>
+      <Plus className="md:hidden" />
     </Button>
   );
 };

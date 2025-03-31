@@ -18,6 +18,8 @@ import { useState } from "react";
 import Confetti from "react-confetti";
 import ResultCard from "./ResultCard";
 import ResultChart from "./ResultChart";
+import { cn } from "@/lib/utils";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const ResultSection = () => {
   const selections = useStorage((state) => state.selections);
@@ -25,6 +27,9 @@ const ResultSection = () => {
   const [isShowConfetti, setIsShowConfetti] = useState(false);
   const { width, height } = useWindowSize();
   const broadcast = useBroadcastEvent();
+  const sortedMessages = useStorage((state) => state.messages).toSorted(
+    (a, b) => b.datetime.localeCompare(a.datetime)
+  );
 
   const startConfetti = () => {
     setIsShowConfetti(true);
@@ -47,9 +52,9 @@ const ResultSection = () => {
     selections.forEach((item) => item.set("value", null));
   }, []);
 
-  const onCheckChange = useMutation(({ storage }, checked) => {
+  const onCheckChange = useMutation(({ storage }, checked, name) => {
     const gameStateStorage = storage.get("gameState");
-    gameStateStorage.set("allowEmpty", checked);
+    gameStateStorage.set(name, checked);
   }, []);
 
   const renderActionButton = () => {
@@ -62,13 +67,28 @@ const ResultSection = () => {
       const isDisabled = isDisabledByNumber || isDisabledBySpectatorRule;
 
       return (
-        <div className="flex flex-col gap-8 items-center absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-          <div className="flex flex-col items-center gap-1 -mt-10">
-            <p className="text-white text-sm font-semibold">Allow Spectators</p>
-            <Switch
-              checked={gameState.allowEmpty}
-              onCheckedChange={onCheckChange}
-            />
+        <div className="flex flex-col gap-4 items-center absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          <div className="flex flex-col gap-2 -mt-12">
+            <div className="flex items-center gap-1">
+              <p className="text-white text-sm font-semibold">Spectators?</p>
+              <Checkbox
+                className="bg-white"
+                checked={gameState.allowEmpty}
+                onCheckedChange={(checked) =>
+                  onCheckChange(checked, "allowEmpty")
+                }
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <p className="text-white text-sm font-semibold">Show chat?</p>
+              <Checkbox
+                className="bg-white"
+                checked={gameState.showChat}
+                onCheckedChange={(checked) =>
+                  onCheckChange(checked, "showChat")
+                }
+              />
+            </div>
           </div>
           <TooltipProvider>
             <Tooltip delayDuration={0}>
@@ -116,18 +136,31 @@ const ResultSection = () => {
 
   return (
     <div className="h-[60vh] flex items-center justify-center gap-40">
-      <div className="w-60 h-60 rounded-full bg-blue-300 relative origin-center">
+      <div
+        className={cn(
+          "w-60 h-60 rounded-full bg-blue-300 relative origin-center md:block",
+          gameState.state === EState.REVEALED ? "hidden" : ""
+        )}
+      >
         {selections.map((item, index) => (
           <ResultCard
             key={item.name}
             item={item}
             index={index}
             cardCount={selections.length}
+            lastMessage={
+              sortedMessages.find((mes) => mes.sender === item.name)?.content
+            }
           />
         ))}
         {renderActionButton()}
       </div>
-      {gameState.state === EState.REVEALED && <ResultChart />}
+      {gameState.state === EState.REVEALED && (
+        <div>
+          <ResultChart />
+          <div className="md:hidden relative">{renderActionButton()}</div>
+        </div>
+      )}
       {isShowConfetti && (
         <Confetti width={width} height={height} tweenDuration={100} />
       )}

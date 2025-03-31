@@ -1,19 +1,34 @@
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { EState, UserSelection } from "@/liveblocks.config";
 import { useStorage } from "@liveblocks/react/suspense";
-import React, { FC } from "react";
+import { TooltipArrow } from "@radix-ui/react-tooltip";
+import { Triangle } from "lucide-react";
+import { FC } from "react";
 import useLocalStorage from "use-local-storage";
 
 interface ResultCardProps {
   item: UserSelection;
   index: number;
   cardCount: number;
+  lastMessage?: string;
 }
 
-const ResultCard: FC<ResultCardProps> = ({ item, index, cardCount }) => {
+const ResultCard: FC<ResultCardProps> = ({
+  item,
+  index,
+  cardCount,
+  lastMessage,
+}) => {
   const gameState = useStorage((state) => state.gameState);
   const isSelected = item.value != null;
   const isRevealed = isSelected && gameState.state === EState.REVEALED;
+  const isShowChat = lastMessage && gameState.showChat;
   const [currentUserName] = useLocalStorage(
     "currentUserName",
     localStorage.getItem("currentUserName")
@@ -59,12 +74,31 @@ const ResultCard: FC<ResultCardProps> = ({ item, index, cardCount }) => {
           rotate: `${360 - (index * 360) / cardCount}deg`,
         }}
       >
-        <p className="absolute -top-6 whitespace-nowrap left-1/2 -translate-x-1/2 text-center text-xs">
-          {item.name}{" "}
-          {currentUserName === item.name && (
-            <span className="text-blue-400">(you)</span>
-          )}
-        </p>
+        <TooltipProvider>
+          <Tooltip open={true}>
+            <div className="absolute -top-6 whitespace-nowrap left-1/2 -translate-x-1/2 text-center text-xs">
+              <TooltipTrigger>
+                <span className="font-semibold">{item.name} </span>
+                {currentUserName === item.name && (
+                  <span className="text-blue-400">(you)</span>
+                )}
+              </TooltipTrigger>
+              {isShowChat && (
+                <TooltipContent
+                  sideOffset={10}
+                  className="animate-pulse duration-[0.5] max-w-[180px] whitespace-normal px-2"
+                  key={lastMessage}
+                >
+                  <Triangle
+                    fill="#fff"
+                    className="absolute -bottom-2 text-white rotate-180 size-3 left-1/2 -translate-x-1/2 drop-shadow-[rgba(0,0,15,0.1)_0px_-2px_1px]"
+                  />
+                  <span className="text-xs">{lastMessage}</span>
+                </TooltipContent>
+              )}
+            </div>
+          </Tooltip>
+        </TooltipProvider>
         <div className="flip-card-inner rounded-md">{renderCardContent()}</div>
       </div>
     </div>
