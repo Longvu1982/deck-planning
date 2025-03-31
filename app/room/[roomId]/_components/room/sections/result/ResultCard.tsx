@@ -1,3 +1,4 @@
+"use client";
 import {
   Tooltip,
   TooltipContent,
@@ -9,7 +10,7 @@ import { EState, UserSelection } from "@/liveblocks.config";
 import { useStorage } from "@liveblocks/react/suspense";
 import { TooltipArrow } from "@radix-ui/react-tooltip";
 import { Triangle } from "lucide-react";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import useLocalStorage from "use-local-storage";
 
 interface ResultCardProps {
@@ -28,11 +29,30 @@ const ResultCard: FC<ResultCardProps> = ({
   const gameState = useStorage((state) => state.gameState);
   const isSelected = item.value != null;
   const isRevealed = isSelected && gameState.state === EState.REVEALED;
-  const isShowChat = lastMessage && gameState.showChat;
+
+  const [currentMessage, setCurrentMessage] = useState<string | null>(null);
+
+  const isShowChat = currentMessage && gameState.showChat;
   const [currentUserName] = useLocalStorage(
     "currentUserName",
     localStorage.getItem("currentUserName")
   );
+
+  useEffect(() => {
+    let timeout: NodeJS.Timeout | null;
+    if (lastMessage) {
+      setCurrentMessage(lastMessage);
+      timeout = setTimeout(() => {
+        setCurrentMessage(null);
+      }, 3000);
+    }
+
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+    };
+  }, [lastMessage]);
 
   const renderCardContent = () => {
     return (
